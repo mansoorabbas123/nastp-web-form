@@ -1,103 +1,557 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import InputMask from "react-input-mask-next";
+
+const qualifications = ["MS", "BS", "FA", "FSC", "Matric"] as const;
+
+// Validation schema
+const formSchema = z.object({
+  name: z.string().min(3, "Name is required"),
+  fatherName: z.string().min(3, "Father/Guardian Name is required"),
+  fatherNumber: z
+    .string()
+    .regex(/^\+92\d{10}$/, "Father's number must be in +92XXXXXXXXXX format"),
+  cnic: z
+  .string()
+  .regex(/^\d{5}-\d{7}-\d$/, "CNIC must be in 14242-4466754-9 format"),
+  qualification: z.string().refine(
+  (val) => qualifications.includes(val as any),
+  { message: "Select a valid qualification" }
+),
+  gender: z.enum(["Male", "Female"] as const).refine(
+  (val) => ["Male", "Female"].includes(val),
+  { message: "Select gender" }
+),
+  phone: z
+    .string()
+    .regex(/^\+92\d{10}$/, "Phone number must be in +92XXXXXXXXXX format"),
+  email: z.string().email("Invalid email address"),
+  address: z.string().min(5, "Address is required"),
+  district: z.string().min(2, "District is required"),
+  birthDate: z.string().nonempty("Birth date is required"),
+  courses: z.array(z.string()).min(1, "Select at least one course"),
+  priority1: z.string().nonempty("Select 1st priority"),
+  priority2: z.string().nonempty("Select 2nd priority"),
+});
+
+type FormData = z.infer<typeof formSchema>;
+
+const coursesList = [
+  "Digital Forensic & Cyber Security",
+  "Digital Marketing & SEO",
+  "Graphic Designing",
+  "Mobile Development",
+  "Web App Development",
+  "Python Programming",
+  "Sales Force Administrator",
+  "Excel (Financial Excel)",
+  "Big Data Analytics",
+  "Generative AI Essential",
+  "Power BI",
+];
+
+export default function StudentRegistrationForm() {
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+  });
+
+  const onSubmit = (data: FormData) => {
+    console.log("Form Submitted:", data);
+    alert("Form submitted successfully!");
+  };
+
+  const selectedCourses = watch("courses") || [];
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="max-w-4xl mx-auto p-8">
+      <h1 className="text-2xl font-bold mb-6 text-center">
+        Student Enrollment Form
+      </h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* Student Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <input
+              type="text"
+              placeholder="Student’s Name"
+              {...register("name")}
+              className="border p-2 rounded w-full"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            )}
+          </div>
+
+          <div>
+            <input
+              type="text"
+              placeholder="Father/Guardian Name"
+              {...register("fatherName")}
+              className="border p-2 rounded w-full"
+            />
+            {errors.fatherName && (
+              <p className="text-red-500 text-sm">{errors.fatherName.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Controller
+              name="fatherNumber"
+              control={control}
+              render={({ field }) => (
+                <PhoneInput
+                  {...field}
+                  defaultCountry="PK"
+                  international
+                  className="border p-2 rounded w-full"
+                  placeholder="Father/Guardian Number"
+                />
+              )}
+            />
+            {errors.fatherNumber && (
+              <p className="text-red-500 text-sm">
+                {errors.fatherNumber.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+       <div>
+  <input
+    type="text"
+    placeholder="CNIC (e.g. 14242-4466754-9)"
+    {...register("cnic")}
+    className="border p-2 rounded w-full"
+  />
+  {errors.cnic && (
+    <p className="text-red-500 text-sm">{errors.cnic.message}</p>
+  )}
+</div>
+          </div>
+
+          <div>
+            <select
+              {...register("qualification")}
+              className="border p-2 rounded w-full"
+            >
+              <option value="">Select Qualification</option>
+              <option value="MS">MS</option>
+              <option value="BS">BS</option>
+              <option value="FA">FA</option>
+              <option value="FSC">FSC</option>
+              <option value="Matric">Matric</option>
+            </select>
+            {errors.qualification && (
+              <p className="text-red-500 text-sm">
+                {errors.qualification.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <select
+              {...register("gender")}
+              className="border p-2 rounded w-full"
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+            {errors.gender && (
+              <p className="text-red-500 text-sm">{errors.gender.message}</p>
+            )}
+          </div>
+
+          <div>
+            <Controller
+              name="phone"
+              control={control}
+              render={({ field }) => (
+                <PhoneInput
+                  {...field}
+                  defaultCountry="PK"
+                  international
+                  className="border p-2 rounded w-full"
+                  placeholder="Phone Number"
+                />
+              )}
+            />
+            {errors.phone && (
+              <p className="text-red-500 text-sm">{errors.phone.message}</p>
+            )}
+          </div>
+
+          <div>
+            <input
+              type="email"
+              placeholder="Email Address"
+              {...register("email")}
+              className="border p-2 rounded w-full"
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
+          </div>
+
+          <div>
+            <input
+              type="text"
+              placeholder="District"
+              {...register("district")}
+              className="border p-2 rounded w-full"
+            />
+            {errors.district && (
+              <p className="text-red-500 text-sm">{errors.district.message}</p>
+            )}
+          </div>
+
+          <div>
+            <input
+              type="date"
+              {...register("birthDate")}
+              className="border p-2 rounded w-full"
+            />
+            {errors.birthDate && (
+              <p className="text-red-500 text-sm">{errors.birthDate.message}</p>
+            )}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        {/* Address */}
+        <div>
+          <textarea
+            placeholder="Present Address"
+            {...register("address")}
+            className="border p-2 rounded w-full"
+            rows={3}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          {errors.address && (
+            <p className="text-red-500 text-sm">{errors.address.message}</p>
+          )}
+        </div>
+
+        {/* Courses */}
+        <div>
+          <h2 className="text-lg font-semibold mb-2">
+            Skill Enhancement Programs
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {coursesList.map((course) => (
+              <label key={course} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  value={course}
+                  {...register("courses")}
+                  className="accent-blue-600"
+                />
+                {course}
+              </label>
+            ))}
+          </div>
+          {errors.courses && (
+            <p className="text-red-500 text-sm">{errors.courses.message}</p>
+          )}
+        </div>
+
+        {/* Priorities */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <select
+            {...register("priority1")}
+            className="border p-2 rounded w-full"
+          >
+            <option value="">Select 1st Priority</option>
+            {coursesList.map((course) => (
+              <option key={course} value={course}>
+                {course}
+              </option>
+            ))}
+          </select>
+          {errors.priority1 && (
+            <p className="text-red-500 text-sm">{errors.priority1.message}</p>
+          )}
+
+          <select
+            {...register("priority2")}
+            className="border p-2 rounded w-full"
+          >
+            <option value="">Select 2nd Priority</option>
+            {coursesList.map((course) => (
+              <option key={course} value={course}>
+                {course}
+              </option>
+            ))}
+          </select>
+          {errors.priority2 && (
+            <p className="text-red-500 text-sm">{errors.priority2.message}</p>
+          )}
+        </div>
+
+        {/* Submit */}
+        <button
+          type="submit"
+          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          Submit
+        </button>
+      </form>
     </div>
   );
 }
+
+
+
+
+
+
+
+// "use client";
+
+// import { useState } from "react";
+
+// type FormData = {
+//   name: string;
+//   fatherName: string;
+//   fatherNumber: string;
+//   cnic: string;
+//   qualification: string;
+//   gender: "Male" | "Female" | "";
+//   phone: string;
+//   email: string;
+//   address: string;
+//   district: string;
+//   birthDate: string;
+//   courses: string[];
+//   priority1: string;
+//   priority2: string;
+// };
+
+// const coursesList = [
+//   "Digital Forensic & Cyber Security",
+//   "Digital Marketing & SEO",
+//   "Graphic Designing",
+//   "Mobile Development",
+//   "Web App Development",
+//   "Python Programming",
+//   "Sales Force Administrator",
+//   "Excel (Financial Excel)",
+//   "Big Data Analytics",
+//   "Generative AI Essential",
+//   "Power BI",
+// ];
+
+// export default function home() {
+//   const [form, setForm] = useState<FormData>({
+//     name: "",
+//     fatherName: "",
+//     fatherNumber: "",
+//     cnic: "",
+//     qualification: "",
+//     gender: "",
+//     phone: "",
+//     email: "",
+//     address: "",
+//     district: "",
+//     birthDate: "",
+//     courses: [],
+//     priority1: "",
+//     priority2: "",
+//   });
+
+//   const handleChange = (
+//     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+//   ) => {
+//     const { name, value } = e.target;
+//     setForm((prev) => ({ ...prev, [name]: value }));
+//   };
+
+//   const handleCheckboxChange = (course: string) => {
+//     setForm((prev) => {
+//       const alreadySelected = prev.courses.includes(course);
+//       return {
+//         ...prev,
+//         courses: alreadySelected
+//           ? prev.courses.filter((c) => c !== course)
+//           : [...prev.courses, course],
+//       };
+//     });
+//   };
+
+//   const handleSubmit = (e: React.FormEvent) => {
+//     e.preventDefault();
+//     console.log("Form Submitted:", form);
+//     alert("Form submitted! Check console for data.");
+//   };
+
+//   return (
+//     <div className="max-w-4xl mx-auto p-8">
+//       <h1 className="text-2xl font-bold mb-6 text-center">Student Enrollment Form</h1>
+//       <form onSubmit={handleSubmit} className="space-y-6">
+//         {/* Student Info */}
+//         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//           <input
+//             type="text"
+//             name="name"
+//             placeholder="Student’s Name"
+//             value={form.name}
+//             onChange={handleChange}
+//             className="border p-2 rounded w-full"
+//             required
+//           />
+//           <input
+//             type="text"
+//             name="fatherName"
+//             placeholder="Father/Guardian Name"
+//             value={form.fatherName}
+//             onChange={handleChange}
+//             className="border p-2 rounded w-full"
+//             required
+//           />
+//           <input
+//             type="text"
+//             name="fatherNumber"
+//             placeholder="Father/Guardian Number"
+//             value={form.fatherNumber}
+//             onChange={handleChange}
+//             className="border p-2 rounded w-full"
+//           />
+//           <input
+//             type="text"
+//             name="cnic"
+//             placeholder="CNIC Number"
+//             value={form.cnic}
+//             onChange={handleChange}
+//             className="border p-2 rounded w-full"
+//             required
+//           />
+//           <input
+//             type="text"
+//             name="qualification"
+//             placeholder="Qualification"
+//             value={form.qualification}
+//             onChange={handleChange}
+//             className="border p-2 rounded w-full"
+//           />
+//           <select
+//             name="gender"
+//             value={form.gender}
+//             onChange={handleChange}
+//             className="border p-2 rounded w-full"
+//             required
+//           >
+//             <option value="">Select Gender</option>
+//             <option value="Male">Male</option>
+//             <option value="Female">Female</option>
+//           </select>
+//           <input
+//             type="tel"
+//             name="phone"
+//             placeholder="Phone Number"
+//             value={form.phone}
+//             onChange={handleChange}
+//             className="border p-2 rounded w-full"
+//           />
+//           <input
+//             type="email"
+//             name="email"
+//             placeholder="Email Address"
+//             value={form.email}
+//             onChange={handleChange}
+//             className="border p-2 rounded w-full"
+//           />
+//           <input
+//             type="text"
+//             name="district"
+//             placeholder="District"
+//             value={form.district}
+//             onChange={handleChange}
+//             className="border p-2 rounded w-full"
+//           />
+//           <input
+//             type="date"
+//             name="birthDate"
+//             value={form.birthDate}
+//             onChange={handleChange}
+//             className="border p-2 rounded w-full"
+//           />
+//         </div>
+
+//         <textarea
+//           name="address"
+//           placeholder="Present Address"
+//           value={form.address}
+//           onChange={handleChange}
+//           className="border p-2 rounded w-full"
+//           rows={3}
+//         />
+
+//         {/* Courses Checklist */}
+//         <div>
+//           <h2 className="text-lg font-semibold mb-2">Skill Enhancement Programs</h2>
+//           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+//             {coursesList.map((course) => (
+//               <label key={course} className="flex items-center gap-2">
+//                 <input
+//                   type="checkbox"
+//                   checked={form.courses.includes(course)}
+//                   onChange={() => handleCheckboxChange(course)}
+//                   className="accent-blue-600"
+//                 />
+//                 {course}
+//               </label>
+//             ))}
+//           </div>
+//         </div>
+
+//         {/* Priorities */}
+//         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//           <select
+//             name="priority1"
+//             value={form.priority1}
+//             onChange={handleChange}
+//             className="border p-2 rounded w-full"
+//           >
+//             <option value="">Select 1st Priority</option>
+//             {coursesList.map((course) => (
+//               <option key={course} value={course}>
+//                 {course}
+//               </option>
+//             ))}
+//           </select>
+//           <select
+//             name="priority2"
+//             value={form.priority2}
+//             onChange={handleChange}
+//             className="border p-2 rounded w-full"
+//           >
+//             <option value="">Select 2nd Priority</option>
+//             {coursesList.map((course) => (
+//               <option key={course} value={course}>
+//                 {course}
+//               </option>
+//             ))}
+//           </select>
+//         </div>
+
+//         {/* Submit */}
+//         <button
+//           type="submit"
+//           className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+//         >
+//           Submit
+//         </button>
+//       </form>
+//     </div>
+//   );
+// }
