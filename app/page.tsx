@@ -47,12 +47,6 @@ const coursesList = [
   "Graphic Designing",
   "Mobile Development",
   "Web App Development",
-  "Python Programming",
-  "Sales Force Administrator",
-  "Excel (Financial Excel)",
-  "Big Data Analytics",
-  "Generative AI Essential",
-  "Power BI",
 ];
 
 export default function StudentRegistrationForm() {
@@ -66,10 +60,31 @@ export default function StudentRegistrationForm() {
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form Submitted:", data);
-    alert("Form submitted successfully!");
-  };
+  // const onSubmit = (data: FormData) => {
+  //   console.log("Form Submitted:", data);
+  //   alert("Form submitted successfully!");
+  // };
+
+  const onSubmit = async (data: FormData) => {
+        console.log("Form Submitted:", data);
+  try {
+    const res = await fetch("/api/students", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      alert("Form submitted successfully!");
+    } else {
+      alert("Failed to submit form");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Something went wrong");
+  }
+};
+
 
   const selectedCourses = watch("courses") || [];
 
@@ -83,6 +98,7 @@ export default function StudentRegistrationForm() {
         {/* Student Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
+            <label className="block mb-1 font-medium">Student’s Name</label>
             <input
               type="text"
               placeholder="Student’s Name"
@@ -95,6 +111,7 @@ export default function StudentRegistrationForm() {
           </div>
 
           <div>
+            <label className="block mb-1 font-medium">Father/Guardian Name</label>
             <input
               type="text"
               placeholder="Father/Guardian Name"
@@ -107,6 +124,7 @@ export default function StudentRegistrationForm() {
           </div>
 
           <div>
+            <label className="block mb-1 font-medium">Father/Guardian Number</label>
             <Controller
               name="fatherNumber"
               control={control}
@@ -129,6 +147,7 @@ export default function StudentRegistrationForm() {
 
           <div>
        <div>
+        <label className="block mb-1 font-medium">CNIC</label>
   <input
     type="text"
     placeholder="CNIC (e.g. 14242-4466754-9)"
@@ -142,6 +161,7 @@ export default function StudentRegistrationForm() {
           </div>
 
           <div>
+            <label className="block mb-1 font-medium">Qualification</label>
             <select
               {...register("qualification")}
               className="border p-2 rounded w-full"
@@ -161,11 +181,12 @@ export default function StudentRegistrationForm() {
           </div>
 
           <div>
+            <label className="block mb-1 font">Select Gender</label>
             <select
               {...register("gender")}
               className="border p-2 rounded w-full"
             >
-              <option value="">Select Gender</option>
+              {/* <option value="">Select Gender</option> */}
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select>
@@ -175,6 +196,7 @@ export default function StudentRegistrationForm() {
           </div>
 
           <div>
+            <label className="block mb-1 font-medium">Phone Number</label>
             <Controller
               name="phone"
               control={control}
@@ -194,6 +216,7 @@ export default function StudentRegistrationForm() {
           </div>
 
           <div>
+            <label className="block mb-1 font-medium">Email Address</label>
             <input
               type="email"
               placeholder="Email Address"
@@ -206,6 +229,7 @@ export default function StudentRegistrationForm() {
           </div>
 
           <div>
+            <label className="block mb-1 font-medium">District</label>
             <input
               type="text"
               placeholder="District"
@@ -218,6 +242,7 @@ export default function StudentRegistrationForm() {
           </div>
 
           <div>
+            <label className="block mb-1 font-medium">Birth Date</label>
             <input
               type="date"
               {...register("birthDate")}
@@ -231,6 +256,7 @@ export default function StudentRegistrationForm() {
 
         {/* Address */}
         <div>
+          <label className="block mb-1 font-medium">Present Address</label> 
           <textarea
             placeholder="Present Address"
             {...register("address")}
@@ -266,6 +292,9 @@ export default function StudentRegistrationForm() {
         </div>
 
         {/* Priorities */}
+                <h2 className="text-lg font-semibold mb-2">
+            Select Your Priorities
+          </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <select
             {...register("priority1")}
@@ -281,7 +310,6 @@ export default function StudentRegistrationForm() {
           {errors.priority1 && (
             <p className="text-red-500 text-sm">{errors.priority1.message}</p>
           )}
-
           <select
             {...register("priority2")}
             className="border p-2 rounded w-full"
