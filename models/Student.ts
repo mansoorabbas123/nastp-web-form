@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { optional } from "zod";
 
 export interface IStudent extends Document {
   name: string;
@@ -10,11 +11,12 @@ export interface IStudent extends Document {
   phone: string;
   email: string;
   address: string;
-  district: string;
+  city: string;
   birthDate: string;
   courses: string[];
   priority1: string;
   priority2: string;
+  courseSlots?: Record<string, "Morning" | "Evening">;
 }
 
 const StudentSchema: Schema = new Schema(
@@ -28,11 +30,19 @@ const StudentSchema: Schema = new Schema(
     phone: { type: String, required: true },
     email: { type: String, required: true },
     address: { type: String, required: true },
-    district: { type: String, required: true },
+    city: { type: String, required: true },
     birthDate: { type: String, required: true },
     courses: [{ type: String }],
-    priority1: { type: String, required: true },
-    priority2: { type: String, required: true },
+    priority1: { type: String, optional: true },
+    priority2: { type: String, optional: true },
+      courseSlots: {
+      type: Map,
+      of: {
+        type: String,
+        enum: ["Morning", "Evening"],
+      },
+      default: {},
+    },
   },
   { timestamps: true }
 );

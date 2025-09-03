@@ -37,12 +37,30 @@ const formSchema = z.object({
     .regex(/^\+92\d{10}$/, "Phone number must be in +92XXXXXXXXXX format"),
   email: z.string().email("Invalid email address"),
   address: z.string().min(5, "Address is required"),
-  district: z.string().min(2, "District is required"),
+  city: z.string().min(2, "Current City is required"),
   birthDate: z.string().nonempty("Birth date is required"),
   courses: z.array(z.string()).min(1, "Select at least one course").max(2, "You can only select up to 2 courses"),
-  priority1: z.string().nonempty("Select 1st priority"),
-  priority2: z.string().nonempty("Select 2nd priority"),
-});
+  priority1: z.string().optional(),
+  priority2: z.string().optional(),
+  courseSlots: z.record(z.string(), z.enum(["Morning", "Evening"])).optional(),
+}).superRefine((data, ctx) => {
+    if (data.courses.length === 2) {
+      if (!data.priority1) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Select 1st priority",
+          path: ["priority1"],
+        });
+      }
+      if (!data.priority2) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Select 2nd priority",
+          path: ["priority2"],
+        });
+      }
+    }
+  });;
 
 type FormData = z.infer<typeof formSchema>;
 
@@ -76,13 +94,15 @@ export default function StudentRegistrationForm() {
       phone: "",
       email: "",
       address: "",
-      district: "",
+      city: "",
       birthDate: "",
       courses: [],
       priority1: "",
       priority2: "",
     },
   });
+
+  console.log("Form Errors:", errors);
 
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
@@ -107,31 +127,10 @@ export default function StudentRegistrationForm() {
       setIsLoading(false);
       console.error(err);
       alert("❌ Something went wrong. Please try again.");
-    }finally{
+    } finally {
       setIsLoading(false);
     }
   };
-
-  console.log("isSubmitting...", isSubmitting)
-  // const onSubmit = async (data: FormData) => {
-  //   console.log("Form Submitted:", data);
-  //   try {
-  //     const res = await fetch("/api/students", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify(data),
-  //     });
-
-  //     if (res.ok) {
-  //       alert("Form submitted successfully!");
-  //     } else {
-  //       alert("Failed to submit form");
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Something went wrong");
-  //   }
-  // };
 
   const selectedCourses = watch("courses") || [];
   const priority1 = watch("priority1");
@@ -186,7 +185,7 @@ export default function StudentRegistrationForm() {
             )}
           </div>
 
-          <div>
+          {/* <div>
             <label className="block mb-1 font-medium">Father/Guardian Number</label>
             <Controller
               name="fatherNumber"
@@ -206,8 +205,26 @@ export default function StudentRegistrationForm() {
                 {errors.fatherNumber.message}
               </p>
             )}
+          </div> */}
+          <div>
+            <label className="block mb-1 font-medium">Phone Number</label>
+            <Controller
+              name="phone"
+              control={control}
+              render={({ field }) => (
+                <PhoneInput
+                  {...field}
+                  defaultCountry="PK"
+                  international
+                  className="border p-2 rounded w-full"
+                  placeholder="Phone Number"
+                />
+              )}
+            />
+            {errors.phone && (
+              <p className="text-red-500 text-sm">{errors.phone.message}</p>
+            )}
           </div>
-
           <div>
             <div>
               <label className="block mb-1 font-medium">CNIC / Form B</label>
@@ -258,7 +275,7 @@ export default function StudentRegistrationForm() {
             )}
           </div>
 
-          <div>
+          {/* <div>
             <label className="block mb-1 font-medium">Phone Number</label>
             <Controller
               name="phone"
@@ -276,8 +293,28 @@ export default function StudentRegistrationForm() {
             {errors.phone && (
               <p className="text-red-500 text-sm">{errors.phone.message}</p>
             )}
+          </div> */}
+  <div>
+            <label className="block mb-1 font-medium">Father/Guardian Number</label>
+            <Controller
+              name="fatherNumber"
+              control={control}
+              render={({ field }) => (
+                <PhoneInput
+                  {...field}
+                  defaultCountry="PK"
+                  international
+                  className="border p-2 rounded w-full"
+                  placeholder="Father/Guardian Number"
+                />
+              )}
+            />
+            {errors.fatherNumber && (
+              <p className="text-red-500 text-sm">
+                {errors.fatherNumber.message}
+              </p>
+            )}
           </div>
-
           <div>
             <label className="block mb-1 font-medium">Email Address</label>
             <input
@@ -292,15 +329,15 @@ export default function StudentRegistrationForm() {
           </div>
 
           <div>
-            <label className="block mb-1 font-medium">District</label>
+            <label className="block mb-1 font-medium">Current City</label>
             <input
               type="text"
               // placeholder="District"
-              {...register("district")}
+              {...register("city")}
               className="border p-2 rounded w-full"
             />
-            {errors.district && (
-              <p className="text-red-500 text-sm">{errors.district.message}</p>
+            {errors.city && (
+              <p className="text-red-500 text-sm">{errors.city.message}</p>
             )}
           </div>
 
@@ -363,43 +400,73 @@ export default function StudentRegistrationForm() {
           )}
         </div>
 
-        {/* Priorities */}
-        <h2 className="text-lg font-semibold mb-2">Select Your Priorities</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <select {...register("priority1")} className="border p-2 rounded w-full">
-            <option value="">Select 1st Priority</option>
-            {selectedCourses.map((course) => (
-              <option key={course} value={course}>
-                {course}
-              </option>
-            ))}
-          </select>
-          {errors.priority1 && (
-            <p className="text-red-500 text-sm">{errors.priority1.message}</p>
-          )}
+        {/* Course Slots (Morning/Evening) */}
+        {selectedCourses.length > 0 && (
+          <div>
+            <h2 className="text-lg font-semibold mb-2">Select Slots for Your Courses</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {selectedCourses.map((course) => (
+                <div key={course}>
+                  <label className="block mb-1 font-medium">{course} Slot</label>
+                  <select
+                    {...register(`courseSlots.${course}` as const, {
+                      required: `Please select a slot for ${course}`,
+                    })}
+                    className="border p-2 rounded w-full"
+                  >
+                    <option value="">Select Slot</option>
+                    <option value="Morning">Morning</option>
+                    <option value="Evening">Evening</option>
+                  </select>
+                  {errors.courseSlots?.[course] && (
+                    <p className="text-red-500 text-sm">
+                      {errors.courseSlots[course]?.message as string}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-          <select {...register("priority2")} className="border p-2 rounded w-full">
-            <option value="">Select 2nd Priority</option>
-            {selectedCourses
-              .filter((course) => course !== priority1)
-              .map((course) => (
+        {/* Priorities */}
+        {selectedCourses.length > 1 && <>
+          <h2 className="text-lg font-semibold mb-2">Select Your Priorities</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <select {...register("priority1")} className="border p-2 rounded w-full">
+              <option value="">Select 1st Priority</option>
+              {selectedCourses.map((course) => (
                 <option key={course} value={course}>
                   {course}
                 </option>
               ))}
-          </select>
-          {errors.priority2 && (
-            <p className="text-red-500 text-sm">{errors.priority2.message}</p>
-          )}
-        </div>
+            </select>
+            {errors.priority1 && (
+              <p className="text-red-500 text-sm">{errors.priority1.message}</p>
+            )}
+            <select {...register("priority2")} className="border p-2 rounded w-full">
+              <option value="">Select 2nd Priority</option>
+              {selectedCourses
+                .filter((course) => course !== priority1)
+                .map((course) => (
+                  <option key={course} value={course}>
+                    {course}
+                  </option>
+                ))}
+            </select>
+            {errors.priority2 && (
+              <p className="text-red-500 text-sm">{errors.priority2.message}</p>
+            )}
+          </div></>}
+
         <p className="text-slate-500">Note: You can select either 1 course or 2 courses if there is no clash in timings. Kindly bring your passport-size pictures (at least 02), a copy of your CNIC, and also bring a document showing your latest degree</p>
         {/* Submit */}
         <button
           disabled={loading}
           type="submit"
           className={`py-2 px-4 rounded transition text-white ${isSubmitting
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700"
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-600 hover:bg-blue-700"
             }`}
         >
           {loading ? "Submitting..." : "Submit"}
