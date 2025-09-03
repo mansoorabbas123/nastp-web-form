@@ -5,6 +5,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import { useState } from "react";
+import { is } from "zod/locales";
 
 const qualifications = ["MS", "BS", "FA", "FSC", "Matric"] as const;
 
@@ -17,10 +19,10 @@ const formSchema = z.object({
     .min(3, { message: "Father/Guardian Name must be at least 3 characters long" })
     .max(50, { message: "Father/Guardian Name must not exceed 50 characters" }),
   fatherNumber: z
-    .string().nonempty({ message: "Father's number is required" })
-    .regex(/^\+92\d{10}$/, "Father's number must be in +92XXXXXXXXXX format"),
+    .string().nonempty({ message: "Father/Guardian Number is required" })
+    .regex(/^\+92\d{10}$/, "Father/Guardian Number must be in +92XXXXXXXXXX format"),
   cnic: z
-    .string().nonempty({ message: "CNIC is required" })
+    .string().nonempty({ message: "CNIC / Form B is required" })
     .regex(/^\d{5}-\d{7}-\d$/, "CNIC must be in 14242-4466754-9 format"),
   qualification: z.string().refine(
     (val) => qualifications.includes(val as any),
@@ -53,6 +55,7 @@ const coursesList = [
 ];
 
 export default function StudentRegistrationForm() {
+  const [loading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -60,51 +63,56 @@ export default function StudentRegistrationForm() {
     watch,
     setValue,
     getValues,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-    name: "",
-    fatherName: "",
-    fatherNumber: "",
-    cnic: "",
-    qualification: "",
-    gender: "Male",
-    phone: "",
-    email: "",
-    address: "",
-    district: "",
-    birthDate: "",
-    courses: [],
-    priority1: "",
-    priority2: "",
-  },
+      name: "",
+      fatherName: "",
+      fatherNumber: "",
+      cnic: "",
+      qualification: "",
+      gender: "Male",
+      phone: "",
+      email: "",
+      address: "",
+      district: "",
+      birthDate: "",
+      courses: [],
+      priority1: "",
+      priority2: "",
+    },
   });
 
   const onSubmit = async (data: FormData) => {
-  console.log("Form Submitted:", data);
-  try {
-    const res = await fetch("/api/students", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+    setIsLoading(true);
+    console.log("Form Submitted:", data);
+    try {
+      const res = await fetch("/api/students", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-    const result = await res.json();
+      const result = await res.json();
 
-    if (res.ok) {
-      alert("✅ Form submitted successfully!");
-    } else {
-      // Show backend message if available, otherwise generic
-      alert(result.message || result.error || "❌ Failed to submit form");
+      if (res.ok) {
+        setIsLoading(false);
+        alert("✅ Form submitted successfully!");
+      } else {
+        // Show backend message if available, otherwise generic
+        alert(result.message || result.error || "❌ Failed to submit form");
+      }
+    } catch (err) {
+      setIsLoading(false);
+      console.error(err);
+      alert("❌ Something went wrong. Please try again.");
+    }finally{
+      setIsLoading(false);
     }
-  } catch (err) {
-    console.error(err);
-    alert("❌ Something went wrong. Please try again.");
-  }
-};
+  };
 
-
+  console.log("isSubmitting...", isSubmitting)
   // const onSubmit = async (data: FormData) => {
   //   console.log("Form Submitted:", data);
   //   try {
@@ -202,10 +210,10 @@ export default function StudentRegistrationForm() {
 
           <div>
             <div>
-              <label className="block mb-1 font-medium">CNIC</label>
+              <label className="block mb-1 font-medium">CNIC / Form B</label>
               <input
                 type="text"
-                placeholder="CNIC (e.g. 14242-4466754-9)"
+                placeholder="e.g. 14242-4466754-9"
                 {...register("cnic")}
                 className="border p-2 rounded w-full"
               />
@@ -326,7 +334,7 @@ export default function StudentRegistrationForm() {
         {/* Courses */}
         <div>
           <h2 className="text-lg font-semibold mb-2">
-            Skill Enhancement Programs (Max 2)
+            Skill Enhancement Programs
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {coursesList.map((course) => {
@@ -384,13 +392,17 @@ export default function StudentRegistrationForm() {
             <p className="text-red-500 text-sm">{errors.priority2.message}</p>
           )}
         </div>
-        <p className="text-slate-500">Note: You can select 2 or more courses if there is no clash in timings. Kindly bring your passport size pictures (at least 02), and copy of your CNIC</p>
+        <p className="text-slate-500">Note: You can select either 1 course or 2 courses if there is no clash in timings. Kindly bring your passport-size pictures (at least 02), a copy of your CNIC, and also bring a document showing your latest degree</p>
         {/* Submit */}
         <button
+          disabled={loading}
           type="submit"
-          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+          className={`py-2 px-4 rounded transition text-white ${isSubmitting
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+            }`}
         >
-          Submit
+          {loading ? "Submitting..." : "Submit"}
         </button>
       </form>
     </div>
