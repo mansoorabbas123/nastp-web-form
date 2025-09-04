@@ -44,23 +44,23 @@ const formSchema = z.object({
   priority2: z.string().optional(),
   courseSlots: z.record(z.string(), z.enum(["Morning", "Evening"])).optional(),
 }).superRefine((data, ctx) => {
-    if (data.courses.length === 2) {
-      if (!data.priority1) {
-        ctx.addIssue({
-          code: "custom",
-          message: "Select 1st priority",
-          path: ["priority1"],
-        });
-      }
-      if (!data.priority2) {
-        ctx.addIssue({
-          code: "custom",
-          message: "Select 2nd priority",
-          path: ["priority2"],
-        });
-      }
+  if (data.courses.length === 2) {
+    if (!data.priority1) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Select 1st priority",
+        path: ["priority1"],
+      });
     }
-  });;
+    if (!data.priority2) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Select 2nd priority",
+        path: ["priority2"],
+      });
+    }
+  }
+});;
 
 type FormData = z.infer<typeof formSchema>;
 
@@ -171,41 +171,6 @@ export default function StudentRegistrationForm() {
               <p className="text-red-500 text-sm">{errors.name.message}</p>
             )}
           </div>
-
-          <div>
-            <label className="block mb-1 font-medium">Father/Guardian Name</label>
-            <input
-              type="text"
-              // placeholder="Father/Guardian Name"
-              {...register("fatherName")}
-              className="border p-2 rounded w-full"
-            />
-            {errors.fatherName && (
-              <p className="text-red-500 text-sm">{errors.fatherName.message}</p>
-            )}
-          </div>
-
-          {/* <div>
-            <label className="block mb-1 font-medium">Father/Guardian Number</label>
-            <Controller
-              name="fatherNumber"
-              control={control}
-              render={({ field }) => (
-                <PhoneInput
-                  {...field}
-                  defaultCountry="PK"
-                  international
-                  className="border p-2 rounded w-full"
-                  placeholder="Father/Guardian Number"
-                />
-              )}
-            />
-            {errors.fatherNumber && (
-              <p className="text-red-500 text-sm">
-                {errors.fatherNumber.message}
-              </p>
-            )}
-          </div> */}
           <div>
             <label className="block mb-1 font-medium">Phone Number</label>
             <Controller
@@ -226,6 +191,31 @@ export default function StudentRegistrationForm() {
             )}
           </div>
           <div>
+            <label className="block mb-1 font">Select Gender</label>
+            <select
+              {...register("gender")}
+              className="border p-2 rounded w-full"
+            >
+              {/* <option value="">Select Gender</option> */}
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+            {errors.gender && (
+              <p className="text-red-500 text-sm">{errors.gender.message}</p>
+            )}
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">Birth Date</label>
+            <input
+              type="date"
+              {...register("birthDate")}
+              className="border p-2 rounded w-full"
+            />
+            {errors.birthDate && (
+              <p className="text-red-500 text-sm">{errors.birthDate.message}</p>
+            )}
+          </div>
+          <div>
             <div>
               <label className="block mb-1 font-medium">CNIC / Form B</label>
               <input
@@ -239,7 +229,18 @@ export default function StudentRegistrationForm() {
               )}
             </div>
           </div>
-
+          <div>
+            <label className="block mb-1 font-medium">Email Address</label>
+            <input
+              type="email"
+              // placeholder="Email Address"
+              {...register("email")}
+              className="border p-2 rounded w-full"
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
+          </div>
           <div>
             <label className="block mb-1 font-medium">Qualification</label>
             <select
@@ -259,42 +260,19 @@ export default function StudentRegistrationForm() {
               </p>
             )}
           </div>
-
           <div>
-            <label className="block mb-1 font">Select Gender</label>
-            <select
-              {...register("gender")}
+            <label className="block mb-1 font-medium">Father/Guardian Name</label>
+            <input
+              type="text"
+              // placeholder="Father/Guardian Name"
+              {...register("fatherName")}
               className="border p-2 rounded w-full"
-            >
-              {/* <option value="">Select Gender</option> */}
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-            {errors.gender && (
-              <p className="text-red-500 text-sm">{errors.gender.message}</p>
+            />
+            {errors.fatherName && (
+              <p className="text-red-500 text-sm">{errors.fatherName.message}</p>
             )}
           </div>
-
-          {/* <div>
-            <label className="block mb-1 font-medium">Phone Number</label>
-            <Controller
-              name="phone"
-              control={control}
-              render={({ field }) => (
-                <PhoneInput
-                  {...field}
-                  defaultCountry="PK"
-                  international
-                  className="border p-2 rounded w-full"
-                  placeholder="Phone Number"
-                />
-              )}
-            />
-            {errors.phone && (
-              <p className="text-red-500 text-sm">{errors.phone.message}</p>
-            )}
-          </div> */}
-  <div>
+          <div>
             <label className="block mb-1 font-medium">Father/Guardian Number</label>
             <Controller
               name="fatherNumber"
@@ -316,19 +294,6 @@ export default function StudentRegistrationForm() {
             )}
           </div>
           <div>
-            <label className="block mb-1 font-medium">Email Address</label>
-            <input
-              type="email"
-              // placeholder="Email Address"
-              {...register("email")}
-              className="border p-2 rounded w-full"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message}</p>
-            )}
-          </div>
-
-          <div>
             <label className="block mb-1 font-medium">Current City</label>
             <input
               type="text"
@@ -338,18 +303,6 @@ export default function StudentRegistrationForm() {
             />
             {errors.city && (
               <p className="text-red-500 text-sm">{errors.city.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block mb-1 font-medium">Birth Date</label>
-            <input
-              type="date"
-              {...register("birthDate")}
-              className="border p-2 rounded w-full"
-            />
-            {errors.birthDate && (
-              <p className="text-red-500 text-sm">{errors.birthDate.message}</p>
             )}
           </div>
         </div>
