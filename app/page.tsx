@@ -321,6 +321,9 @@ export default function StudentRegistrationForm() {
           )}
         </div>
 
+        <p className="text-[#00308F] text-sm">You can select either 1 course or 2 courses if there is no clash in timings. Kindly bring your passport-size pictures (at least 02), a copy of your CNIC, and also bring a document showing your latest degree</p>
+
+
         {/* Courses */}
         <div>
           <h2 className="text-lg font-semibold mb-2">
@@ -381,11 +384,63 @@ export default function StudentRegistrationForm() {
             </div>
           </div>
         )}
+        {/* Course Slots (Morning/Evening) */}
+{/* {selectedCourses.length > 0 && (
+  <div>
+    <h2 className="text-lg font-semibold mb-2">Select Slots for Your Courses</h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {selectedCourses.map((course) => {
+        const courseSlots = watch("courseSlots") || {};
+        const selectedSlot = courseSlots[course];
+
+        // Collect slots chosen by *other* courses
+        const takenSlots = Object.entries(courseSlots)
+          .filter(([c]) => c !== course)
+          .map(([_, slot]) => slot);
+
+        // Only show slots that are not already taken
+        const availableSlots = ["Morning", "Evening"].filter(
+          (slot) => !takenSlots.includes(slot as any)
+        );
+
+        return (
+          <div key={course}>
+            <label className="block mb-1 font-medium">{course} Slot</label>
+            <select
+              {...register(`courseSlots.${course}` as const, {
+                required: `Please select a slot for ${course}`,
+              })}
+              className="border p-2 rounded w-full"
+              value={selectedSlot || ""}
+              onChange={(e) =>
+                setValue(`courseSlots.${course}` as const, e.target.value as any)
+              }
+            >
+              <option value="">Select Slot</option>
+              {availableSlots.map((slot) => (
+                <option key={slot} value={slot}>
+                  {slot}
+                </option>
+              ))}
+            </select>
+            {errors.courseSlots?.[course] && (
+              <p className="text-red-500 text-sm">
+                {errors.courseSlots[course]?.message as string}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)} */}
+
 
         {/* Priorities */}
         {selectedCourses.length > 1 && <>
           <h2 className="text-lg font-semibold mb-2">Select Your Priorities</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label className="block mb-1 font-medium">Priority 1</label>
             <select {...register("priority1")} className="border p-2 rounded w-full">
               <option value="">Select 1st Priority</option>
               {selectedCourses.map((course) => (
@@ -397,6 +452,7 @@ export default function StudentRegistrationForm() {
             {errors.priority1 && (
               <p className="text-red-500 text-sm">{errors.priority1.message}</p>
             )}
+            <label className="block mb-1 font-medium">Priority 2</label>
             <select {...register("priority2")} className="border p-2 rounded w-full">
               <option value="">Select 2nd Priority</option>
               {selectedCourses
@@ -411,8 +467,9 @@ export default function StudentRegistrationForm() {
               <p className="text-red-500 text-sm">{errors.priority2.message}</p>
             )}
           </div></>}
-
-        <p className="text-slate-500">Note: You can select either 1 course or 2 courses if there is no clash in timings. Kindly bring your passport-size pictures (at least 02), a copy of your CNIC, and also bring a document showing your latest degree</p>
+      <p className="text-[#00308F] mb-4 text-sm">
+        Note: Please submit your updated CV, qualification copies and CNIC (front & back) to mgr.sep.khrn@nastp.gov.pk for course registration. Contact +92 308 8045079 for further information.
+      </p>
         {/* Submit */}
         <button
           disabled={loading}
