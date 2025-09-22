@@ -32,7 +32,7 @@ export default function AdmissionClosed({ reopenDate, notifyEmail }: AdmissionCl
 
         <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">Admissions Closed</h1>
         <p className="mt-3 text-gray-600 text-base">
-          Thank you for your interest. Admissions are currently closed while we review applications and prepare for the next intake.
+          Thank you for your interest. Admissions are currently closed.
         </p>
 
         {/* Message about reopening date */}
