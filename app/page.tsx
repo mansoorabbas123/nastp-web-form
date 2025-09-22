@@ -7,6 +7,7 @@ import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { useState } from "react";
 import { is } from "zod/locales";
+import AdmissionClosed from "@/components/AdmissionClosed";
 
 const qualifications = ["MS", "BS", "FA", "FSC", "Matric"] as const;
 
@@ -151,338 +152,341 @@ export default function StudentRegistrationForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-10 text-center">
-        Student Enrollment Form
-      </h1>
+//     <div className="max-w-4xl mx-auto p-8">
+//       <h1 className="text-2xl font-bold mb-10 text-center">
+//         Student Enrollment Form
+//       </h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Student Info */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block mb-1 font-medium">Student’s Name</label>
-            <input
-              type="text"
-              // placeholder="Student’s Name"
-              {...register("name")}
-              className="border p-2 rounded w-full"
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
-            )}
-          </div>
-          <div>
-            <label className="block mb-1 font-medium">Phone Number</label>
-            <Controller
-              name="phone"
-              control={control}
-              render={({ field }) => (
-                <PhoneInput
-                  {...field}
-                  defaultCountry="PK"
-                  international
-                  className="border p-2 rounded w-full"
-                  placeholder="Phone Number"
-                />
-              )}
-            />
-            {errors.phone && (
-              <p className="text-red-500 text-sm">{errors.phone.message}</p>
-            )}
-          </div>
-          <div>
-            <label className="block mb-1 font">Select Gender</label>
-            <select
-              {...register("gender")}
-              className="border p-2 rounded w-full"
-            >
-              {/* <option value="">Select Gender</option> */}
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-            {errors.gender && (
-              <p className="text-red-500 text-sm">{errors.gender.message}</p>
-            )}
-          </div>
-          <div>
-            <label className="block mb-1 font-medium">Birth Date</label>
-            <input
-              type="date"
-              {...register("birthDate")}
-              className="border p-2 rounded w-full"
-            />
-            {errors.birthDate && (
-              <p className="text-red-500 text-sm">{errors.birthDate.message}</p>
-            )}
-          </div>
-          <div>
-            <div>
-              <label className="block mb-1 font-medium">CNIC / Form B</label>
-              <input
-                type="text"
-                placeholder="e.g. 14242-4466754-9"
-                {...register("cnic")}
-                className="border p-2 rounded w-full"
-              />
-              {errors.cnic && (
-                <p className="text-red-500 text-sm">{errors.cnic.message}</p>
-              )}
-            </div>
-          </div>
-          <div>
-            <label className="block mb-1 font-medium">Email Address</label>
-            <input
-              type="email"
-              // placeholder="Email Address"
-              {...register("email")}
-              className="border p-2 rounded w-full"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message}</p>
-            )}
-          </div>
-          <div>
-            <label className="block mb-1 font-medium">Qualification</label>
-            <select
-              {...register("qualification")}
-              className="border p-2 rounded w-full"
-            >
-              <option value="">Select Qualification</option>
-              <option value="MS">MS</option>
-              <option value="BS">BS</option>
-              <option value="FA">FA</option>
-              <option value="FSC">FSC</option>
-              <option value="Matric">Matric</option>
-            </select>
-            {errors.qualification && (
-              <p className="text-red-500 text-sm">
-                {errors.qualification.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <label className="block mb-1 font-medium">Father/Guardian Name</label>
-            <input
-              type="text"
-              // placeholder="Father/Guardian Name"
-              {...register("fatherName")}
-              className="border p-2 rounded w-full"
-            />
-            {errors.fatherName && (
-              <p className="text-red-500 text-sm">{errors.fatherName.message}</p>
-            )}
-          </div>
-          <div>
-            <label className="block mb-1 font-medium">Father/Guardian Number</label>
-            <Controller
-              name="fatherNumber"
-              control={control}
-              render={({ field }) => (
-                <PhoneInput
-                  {...field}
-                  defaultCountry="PK"
-                  international
-                  className="border p-2 rounded w-full"
-                  placeholder="Father/Guardian Number"
-                />
-              )}
-            />
-            {errors.fatherNumber && (
-              <p className="text-red-500 text-sm">
-                {errors.fatherNumber.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <label className="block mb-1 font-medium">Current City</label>
-            <input
-              type="text"
-              // placeholder="District"
-              {...register("city")}
-              className="border p-2 rounded w-full"
-            />
-            {errors.city && (
-              <p className="text-red-500 text-sm">{errors.city.message}</p>
-            )}
-          </div>
-        </div>
+//       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+//         {/* Student Info */}
+//         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//           <div>
+//             <label className="block mb-1 font-medium">Student’s Name</label>
+//             <input
+//               type="text"
+//               // placeholder="Student’s Name"
+//               {...register("name")}
+//               className="border p-2 rounded w-full"
+//             />
+//             {errors.name && (
+//               <p className="text-red-500 text-sm">{errors.name.message}</p>
+//             )}
+//           </div>
+//           <div>
+//             <label className="block mb-1 font-medium">Phone Number</label>
+//             <Controller
+//               name="phone"
+//               control={control}
+//               render={({ field }) => (
+//                 <PhoneInput
+//                   {...field}
+//                   defaultCountry="PK"
+//                   international
+//                   className="border p-2 rounded w-full"
+//                   placeholder="Phone Number"
+//                 />
+//               )}
+//             />
+//             {errors.phone && (
+//               <p className="text-red-500 text-sm">{errors.phone.message}</p>
+//             )}
+//           </div>
+//           <div>
+//             <label className="block mb-1 font">Select Gender</label>
+//             <select
+//               {...register("gender")}
+//               className="border p-2 rounded w-full"
+//             >
+//               {/* <option value="">Select Gender</option> */}
+//               <option value="Male">Male</option>
+//               <option value="Female">Female</option>
+//             </select>
+//             {errors.gender && (
+//               <p className="text-red-500 text-sm">{errors.gender.message}</p>
+//             )}
+//           </div>
+//           <div>
+//             <label className="block mb-1 font-medium">Birth Date</label>
+//             <input
+//               type="date"
+//               {...register("birthDate")}
+//               className="border p-2 rounded w-full"
+//             />
+//             {errors.birthDate && (
+//               <p className="text-red-500 text-sm">{errors.birthDate.message}</p>
+//             )}
+//           </div>
+//           <div>
+//             <div>
+//               <label className="block mb-1 font-medium">CNIC / Form B</label>
+//               <input
+//                 type="text"
+//                 placeholder="e.g. 14242-4466754-9"
+//                 {...register("cnic")}
+//                 className="border p-2 rounded w-full"
+//               />
+//               {errors.cnic && (
+//                 <p className="text-red-500 text-sm">{errors.cnic.message}</p>
+//               )}
+//             </div>
+//           </div>
+//           <div>
+//             <label className="block mb-1 font-medium">Email Address</label>
+//             <input
+//               type="email"
+//               // placeholder="Email Address"
+//               {...register("email")}
+//               className="border p-2 rounded w-full"
+//             />
+//             {errors.email && (
+//               <p className="text-red-500 text-sm">{errors.email.message}</p>
+//             )}
+//           </div>
+//           <div>
+//             <label className="block mb-1 font-medium">Qualification</label>
+//             <select
+//               {...register("qualification")}
+//               className="border p-2 rounded w-full"
+//             >
+//               <option value="">Select Qualification</option>
+//               <option value="MS">MS</option>
+//               <option value="BS">BS</option>
+//               <option value="FA">FA</option>
+//               <option value="FSC">FSC</option>
+//               <option value="Matric">Matric</option>
+//             </select>
+//             {errors.qualification && (
+//               <p className="text-red-500 text-sm">
+//                 {errors.qualification.message}
+//               </p>
+//             )}
+//           </div>
+//           <div>
+//             <label className="block mb-1 font-medium">Father/Guardian Name</label>
+//             <input
+//               type="text"
+//               // placeholder="Father/Guardian Name"
+//               {...register("fatherName")}
+//               className="border p-2 rounded w-full"
+//             />
+//             {errors.fatherName && (
+//               <p className="text-red-500 text-sm">{errors.fatherName.message}</p>
+//             )}
+//           </div>
+//           <div>
+//             <label className="block mb-1 font-medium">Father/Guardian Number</label>
+//             <Controller
+//               name="fatherNumber"
+//               control={control}
+//               render={({ field }) => (
+//                 <PhoneInput
+//                   {...field}
+//                   defaultCountry="PK"
+//                   international
+//                   className="border p-2 rounded w-full"
+//                   placeholder="Father/Guardian Number"
+//                 />
+//               )}
+//             />
+//             {errors.fatherNumber && (
+//               <p className="text-red-500 text-sm">
+//                 {errors.fatherNumber.message}
+//               </p>
+//             )}
+//           </div>
+//           <div>
+//             <label className="block mb-1 font-medium">Current City</label>
+//             <input
+//               type="text"
+//               // placeholder="District"
+//               {...register("city")}
+//               className="border p-2 rounded w-full"
+//             />
+//             {errors.city && (
+//               <p className="text-red-500 text-sm">{errors.city.message}</p>
+//             )}
+//           </div>
+//         </div>
 
-        {/* Address */}
-        <div>
-          <label className="block mb-1 font-medium">Present Address</label>
-          <textarea
-            // placeholder="Present Address"
-            {...register("address")}
-            className="border p-2 rounded w-full"
-            rows={3}
-          />
-          {errors.address && (
-            <p className="text-red-500 text-sm">{errors.address.message}</p>
-          )}
-        </div>
+//         {/* Address */}
+//         <div>
+//           <label className="block mb-1 font-medium">Present Address</label>
+//           <textarea
+//             // placeholder="Present Address"
+//             {...register("address")}
+//             className="border p-2 rounded w-full"
+//             rows={3}
+//           />
+//           {errors.address && (
+//             <p className="text-red-500 text-sm">{errors.address.message}</p>
+//           )}
+//         </div>
 
-        <p className="text-[#00308F] text-sm">You can select either 1 course or 2 courses if there is no clash in timings. Kindly bring your passport-size pictures (at least 02), a copy of your CNIC, and also bring a document showing your latest degree</p>
-
-
-        {/* Courses */}
-        <div>
-          <h2 className="text-lg font-semibold mb-2">
-            Skill Enhancement Programs
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {coursesList.map((course) => {
-              const isSelected = selectedCourses.includes(course);
-              const disableCheckbox =
-                !isSelected && selectedCourses.length >= 2;
-              return (
-                <label key={course} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    value={course}
-                    checked={isSelected}
-                    onChange={(e) =>
-                      handleCourseChange(course, e.target.checked)
-                    }
-                    disabled={disableCheckbox}
-                    className="accent-blue-600"
-                  />
-                  {course}
-                </label>
-              );
-            })}
-          </div>
-          {errors.courses && (
-            <p className="text-red-500 text-sm">{errors.courses.message}</p>
-          )}
-        </div>
-
-        {/* Course Slots (Morning/Evening) */}
-        {selectedCourses.length > 0 && (
-          <div>
-            <h2 className="text-lg font-semibold mb-2">Select Slots for Your Courses</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {selectedCourses.map((course) => (
-                <div key={course}>
-                  <label className="block mb-1 font-medium">{course} Slot</label>
-                  <select
-                    {...register(`courseSlots.${course}` as const, {
-                      required: `Please select a slot for ${course}`,
-                    })}
-                    className="border p-2 rounded w-full"
-                  >
-                    <option value="">Select Slot</option>
-                    <option value="Morning">Morning</option>
-                    <option value="Evening">Evening</option>
-                  </select>
-                  {errors.courseSlots?.[course] && (
-                    <p className="text-red-500 text-sm">
-                      {errors.courseSlots[course]?.message as string}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        {/* Course Slots (Morning/Evening) */}
-{/* {selectedCourses.length > 0 && (
-  <div>
-    <h2 className="text-lg font-semibold mb-2">Select Slots for Your Courses</h2>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {selectedCourses.map((course) => {
-        const courseSlots = watch("courseSlots") || {};
-        const selectedSlot = courseSlots[course];
-
-        // Collect slots chosen by *other* courses
-        const takenSlots = Object.entries(courseSlots)
-          .filter(([c]) => c !== course)
-          .map(([_, slot]) => slot);
-
-        // Only show slots that are not already taken
-        const availableSlots = ["Morning", "Evening"].filter(
-          (slot) => !takenSlots.includes(slot as any)
-        );
-
-        return (
-          <div key={course}>
-            <label className="block mb-1 font-medium">{course} Slot</label>
-            <select
-              {...register(`courseSlots.${course}` as const, {
-                required: `Please select a slot for ${course}`,
-              })}
-              className="border p-2 rounded w-full"
-              value={selectedSlot || ""}
-              onChange={(e) =>
-                setValue(`courseSlots.${course}` as const, e.target.value as any)
-              }
-            >
-              <option value="">Select Slot</option>
-              {availableSlots.map((slot) => (
-                <option key={slot} value={slot}>
-                  {slot}
-                </option>
-              ))}
-            </select>
-            {errors.courseSlots?.[course] && (
-              <p className="text-red-500 text-sm">
-                {errors.courseSlots[course]?.message as string}
-              </p>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  </div>
-)} */}
+//         <p className="text-[#00308F] text-sm">You can select either 1 course or 2 courses if there is no clash in timings. Kindly bring your passport-size pictures (at least 02), a copy of your CNIC, and also bring a document showing your latest degree</p>
 
 
-        {/* Priorities */}
-        {selectedCourses.length > 1 && <>
-          <h2 className="text-lg font-semibold mb-2">Select Your Priorities</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label className="block mb-1 font-medium">Priority 1</label>
-            <select {...register("priority1")} className="border p-2 rounded w-full">
-              <option value="">Select 1st Priority</option>
-              {selectedCourses.map((course) => (
-                <option key={course} value={course}>
-                  {course}
-                </option>
-              ))}
-            </select>
-            {errors.priority1 && (
-              <p className="text-red-500 text-sm">{errors.priority1.message}</p>
-            )}
-            <label className="block mb-1 font-medium">Priority 2</label>
-            <select {...register("priority2")} className="border p-2 rounded w-full">
-              <option value="">Select 2nd Priority</option>
-              {selectedCourses
-                .filter((course) => course !== priority1)
-                .map((course) => (
-                  <option key={course} value={course}>
-                    {course}
-                  </option>
-                ))}
-            </select>
-            {errors.priority2 && (
-              <p className="text-red-500 text-sm">{errors.priority2.message}</p>
-            )}
-          </div></>}
-      <p className="text-[#00308F] mb-4 text-sm">
-        Note: Please submit your updated CV, qualification copies and CNIC (front & back) to mgr.sep.khrn@nastp.gov.pk for course registration. Contact +92 308 8045079 for further information.
-      </p>
-        {/* Submit */}
-        <button
-          disabled={loading}
-          type="submit"
-          className={`py-2 px-4 rounded transition text-white ${isSubmitting
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700"
-            }`}
-        >
-          {loading ? "Submitting..." : "Submit"}
-        </button>
-      </form>
-    </div>
+//         {/* Courses */}
+//         <div>
+//           <h2 className="text-lg font-semibold mb-2">
+//             Skill Enhancement Programs
+//           </h2>
+//           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+//             {coursesList.map((course) => {
+//               const isSelected = selectedCourses.includes(course);
+//               const disableCheckbox =
+//                 !isSelected && selectedCourses.length >= 2;
+//               return (
+//                 <label key={course} className="flex items-center gap-2">
+//                   <input
+//                     type="checkbox"
+//                     value={course}
+//                     checked={isSelected}
+//                     onChange={(e) =>
+//                       handleCourseChange(course, e.target.checked)
+//                     }
+//                     disabled={disableCheckbox}
+//                     className="accent-blue-600"
+//                   />
+//                   {course}
+//                 </label>
+//               );
+//             })}
+//           </div>
+//           {errors.courses && (
+//             <p className="text-red-500 text-sm">{errors.courses.message}</p>
+//           )}
+//         </div>
+
+//         {/* Course Slots (Morning/Evening) */}
+//         {selectedCourses.length > 0 && (
+//           <div>
+//             <h2 className="text-lg font-semibold mb-2">Select Slots for Your Courses</h2>
+//             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//               {selectedCourses.map((course) => (
+//                 <div key={course}>
+//                   <label className="block mb-1 font-medium">{course} Slot</label>
+//                   <select
+//                     {...register(`courseSlots.${course}` as const, {
+//                       required: `Please select a slot for ${course}`,
+//                     })}
+//                     className="border p-2 rounded w-full"
+//                   >
+//                     <option value="">Select Slot</option>
+//                     <option value="Morning">Morning</option>
+//                     <option value="Evening">Evening</option>
+//                   </select>
+//                   {errors.courseSlots?.[course] && (
+//                     <p className="text-red-500 text-sm">
+//                       {errors.courseSlots[course]?.message as string}
+//                     </p>
+//                   )}
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         )}
+//         {/* Course Slots (Morning/Evening) */}
+// {/* {selectedCourses.length > 0 && (
+//   <div>
+//     <h2 className="text-lg font-semibold mb-2">Select Slots for Your Courses</h2>
+//     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//       {selectedCourses.map((course) => {
+//         const courseSlots = watch("courseSlots") || {};
+//         const selectedSlot = courseSlots[course];
+
+//         // Collect slots chosen by *other* courses
+//         const takenSlots = Object.entries(courseSlots)
+//           .filter(([c]) => c !== course)
+//           .map(([_, slot]) => slot);
+
+//         // Only show slots that are not already taken
+//         const availableSlots = ["Morning", "Evening"].filter(
+//           (slot) => !takenSlots.includes(slot as any)
+//         );
+
+//         return (
+//           <div key={course}>
+//             <label className="block mb-1 font-medium">{course} Slot</label>
+//             <select
+//               {...register(`courseSlots.${course}` as const, {
+//                 required: `Please select a slot for ${course}`,
+//               })}
+//               className="border p-2 rounded w-full"
+//               value={selectedSlot || ""}
+//               onChange={(e) =>
+//                 setValue(`courseSlots.${course}` as const, e.target.value as any)
+//               }
+//             >
+//               <option value="">Select Slot</option>
+//               {availableSlots.map((slot) => (
+//                 <option key={slot} value={slot}>
+//                   {slot}
+//                 </option>
+//               ))}
+//             </select>
+//             {errors.courseSlots?.[course] && (
+//               <p className="text-red-500 text-sm">
+//                 {errors.courseSlots[course]?.message as string}
+//               </p>
+//             )}
+//           </div>
+//         );
+//       })}
+//     </div>
+//   </div>
+// )} */}
+
+
+//         {/* Priorities */}
+//         {selectedCourses.length > 1 && <>
+//           <h2 className="text-lg font-semibold mb-2">Select Your Priorities</h2>
+//           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//             <label className="block mb-1 font-medium">Priority 1</label>
+//             <select {...register("priority1")} className="border p-2 rounded w-full">
+//               <option value="">Select 1st Priority</option>
+//               {selectedCourses.map((course) => (
+//                 <option key={course} value={course}>
+//                   {course}
+//                 </option>
+//               ))}
+//             </select>
+//             {errors.priority1 && (
+//               <p className="text-red-500 text-sm">{errors.priority1.message}</p>
+//             )}
+//             <label className="block mb-1 font-medium">Priority 2</label>
+//             <select {...register("priority2")} className="border p-2 rounded w-full">
+//               <option value="">Select 2nd Priority</option>
+//               {selectedCourses
+//                 .filter((course) => course !== priority1)
+//                 .map((course) => (
+//                   <option key={course} value={course}>
+//                     {course}
+//                   </option>
+//                 ))}
+//             </select>
+//             {errors.priority2 && (
+//               <p className="text-red-500 text-sm">{errors.priority2.message}</p>
+//             )}
+//           </div></>}
+//       <p className="text-[#00308F] mb-4 text-sm">
+//         Note: Please submit your updated CV, qualification copies and CNIC (front & back) to mgr.sep.khrn@nastp.gov.pk for course registration. Contact +92 308 8045079 for further information.
+//       </p>
+//         {/* Submit */}
+//         <button
+//           disabled={loading}
+//           type="submit"
+//           className={`py-2 px-4 rounded transition text-white ${isSubmitting
+//             ? "bg-gray-400 cursor-not-allowed"
+//             : "bg-blue-600 hover:bg-blue-700"
+//             }`}
+//         >
+//           {loading ? "Submitting..." : "Submit"}
+//         </button>
+//       </form>
+//     </div>
+<>
+<AdmissionClosed />
+</>
   );
 }
 
