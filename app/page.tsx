@@ -469,7 +469,7 @@ export default function StudentRegistrationForm() {
             )}
           </div></>}
       <p className="text-[#00308F] mb-4 text-sm">
-        Note: Please submit your updated CV, qualification copies and CNIC (front & back) to mgr.sep.khrn@nastp.gov.pk for course registration. Contact +92 308 8045079 for further information.
+        Note: Please submit your updated CV, qualification copies and CNIC (front & back) to mgr.coord.khrn@nastp.gov.pk for course registration. Contact +92 308 8045070 for further information.
       </p>
         {/* Submit */}
         <button
