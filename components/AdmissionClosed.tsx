@@ -73,7 +73,7 @@ export default function AdmissionClosed({ reopenDate, notifyEmail }: AdmissionCl
         </div>
 
         <p className="mt-6 text-xs text-gray-400">
-          For urgent questions, please <a href="mailto:mgr.sep.khrn@nastp.gov.pk" className="underline">contact admissions</a>.
+          For urgent questions, please <a href="mailto:trg.coord.khrn@nastp.gov.pk" className="underline">contact admissions</a>.
         </p>
       </section>
     </main>
