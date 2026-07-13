@@ -61,7 +61,7 @@ const formSchema = z.object({
       });
     }
   }
-});;
+});
 
 type FormData = z.infer<typeof formSchema>;
 
@@ -146,6 +146,7 @@ const labelClass = "mb-1.5 block text-sm font-medium text-slate-700";
 const errorClass = "mt-1.5 flex items-center gap-1 text-xs font-medium text-red-600";
 
 export default function StudentRegistrationForm() {
+  const regOpen = false; 
   const [loading, setIsLoading] = useState(false);
   const {
     register,
@@ -222,7 +223,9 @@ export default function StudentRegistrationForm() {
       );
     }
   };
-
+  if(!regOpen){
+    return <AdmissionClosed />
+  }
   return (
     <div className="min-h-screen bg-[#F4F6FA] px-4 py-10 md:py-14">
       <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-900/5">
